@@ -1,4 +1,4 @@
-package com.example.arnal.movies.apadter;
+package com.example.arnal.movies.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
