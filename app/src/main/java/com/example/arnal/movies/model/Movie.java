@@ -4,7 +4,7 @@ package com.example.arnal.movies.model;
 
 
 public class Movie {
-    private double vote_average;
+    private String vote_average;
     private String id;
     private String overview;
     private String original_title;
@@ -12,11 +12,11 @@ public class Movie {
     private String poster_path;
     private String popularity;
 
-    public double getVote_average() {
+    public String getVote_average() {
         return vote_average;
     }
 
-    public void setVote_average(double vote_average) {
+    public void setVote_average(String vote_average) {
         this.vote_average = vote_average;
     }
 

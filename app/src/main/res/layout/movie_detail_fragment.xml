@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,7 +7,7 @@
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <include
         android:id="@+id/primary_info"
@@ -16,20 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <include
-        android:id="@+id/trailer_details"
-        layout="@layout/trailer_fragment"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_trailers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <include
-        android:id="@+id/extra_details"
-        layout="@layout/review_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp" />
+     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="4dp" />
 
 </LinearLayout>
-
-    </ScrollView>
+</ScrollView>

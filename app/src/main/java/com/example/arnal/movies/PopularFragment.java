@@ -1,7 +1,6 @@
 package com.example.arnal.movies;
 
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.arnal.movies.apadter.PosterAdapter;
+import com.example.arnal.movies.adapter.PosterAdapter;
 import com.example.arnal.movies.model.MessageEvent;
 import com.example.arnal.movies.model.Movie;
 import com.example.arnal.movies.model.MoviesAPI;
@@ -42,7 +41,6 @@ public class PopularFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,7 +58,7 @@ public class PopularFragment extends Fragment {
             public void onClick(int position) {
 
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
-                   intent.putExtra(DetailsFragment.POSITION, position);
+                    intent.putExtra(DetailsFragment.POSITION, position);
                     intent.putExtra(DetailsFragment.FRAGMENT_TYPE, "PopularFragment");
 
                     getActivity().startActivity(intent);
@@ -68,10 +66,7 @@ public class PopularFragment extends Fragment {
             }
         });
 
-        // Inflate the layout for this fragment
         return recyclerView;
-
-
     }
 
   private void getPopularMovies() {

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.arnal.movies.apadter.PosterAdapter;
+import com.example.arnal.movies.adapter.PosterAdapter;
 import com.example.arnal.movies.model.MessageEvent;
 import com.example.arnal.movies.model.Movie;
 import com.example.arnal.movies.model.MoviesAPI;
@@ -42,7 +42,6 @@ public class RatedFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,7 +66,6 @@ public class RatedFragment extends Fragment {
 
             }
         });
-        // Inflate the layout for this fragment
         return recyclerView;
     }
     private void getRatedMovies() {

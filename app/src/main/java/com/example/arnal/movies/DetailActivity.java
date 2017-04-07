@@ -1,6 +1,5 @@
 package com.example.arnal.movies;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;

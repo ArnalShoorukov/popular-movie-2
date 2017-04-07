@@ -18,15 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity"
+        <activity
+            android:name=".DetailActivity"
             android:label="@string/app_name"
-            android:parentActivityName = ".MainActivity"
-            >
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
-            </activity>
-
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <provider
+            android:authorities="com.example.arnal.movies"
+            android:name="com.example.arnal.movies.database.MovieContentProvider"
+            android:exported="false"/>
 
     </application>
 
