@@ -7,4 +7,15 @@
     <dimen name="list_verb_height">130dp</dimen>
     <dimen name="list_main_height">64dp</dimen>
     <dimen name="list_image_height">240dp</dimen>
+
+    <!-- Movie title text size -->
+    <dimen name="movie_title_text_size">24sp</dimen>
+
+    <!-- Padding -->
+    <dimen name="small_padding">12dp</dimen>
+    <dimen name="Medium_padding">24dp</dimen>
+
+    <!-- Imageview size -->
+    <dimen name="image_width">120dp</dimen>
+    <dimen name="image_height">180dp</dimen>
 </resources>

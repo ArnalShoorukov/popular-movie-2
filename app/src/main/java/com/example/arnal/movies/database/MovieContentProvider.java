@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import static com.example.arnal.movies.database.MovieContract.MovieEntry.TABLE_NAME;
+import static com.example.arnal.movies.database.MovieContract.MovieEntry;
 
 /**
  * Created by arnal on 4/6/17.
@@ -19,7 +20,7 @@ import static com.example.arnal.movies.database.MovieContract.MovieEntry.TABLE_N
 public class MovieContentProvider extends ContentProvider {
 
     public static final int MOVIE = 100;
-    public static final int MOVIE_MITH_ID = 101;
+    public static final int MOVIE_WITH_ID = 101;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -27,7 +28,7 @@ public class MovieContentProvider extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE, MOVIE);
-        uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE + "/#", MOVIE_MITH_ID);
+        uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_ID);
 
         return uriMatcher;
     }
@@ -47,7 +48,33 @@ public class MovieContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+        // Get readable database
+        SQLiteDatabase db = movieDbHelper.getReadableDatabase();
+
+        // Cursor to hold the result of the query
+        Cursor cursor;
+
+        // Get the code that the URI matcher matches to
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIE:
+                cursor = db.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case MOVIE_WITH_ID:
+                selection = MovieEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+
+        // Set notification URI on the Cursor
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return cursor;
     }
 
     @Nullable
@@ -90,7 +117,32 @@ public class MovieContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        // Get writeable database
+        SQLiteDatabase db = movieDbHelper.getWritableDatabase();
+
+        // Number of rows deleted
+        int rowsDeleted;
+
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIE:
+                rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case MOVIE_WITH_ID:
+                selection = MovieEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = db.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
+
+        // Notify all listeners if >= 1 row has been deleted
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsDeleted;
     }
 
     @Override

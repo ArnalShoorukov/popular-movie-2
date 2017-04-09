@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class DetailActivity extends Activity {
 
@@ -20,7 +22,7 @@ public class DetailActivity extends Activity {
         setContentView(frameLayout, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-       // DetailFragment detailFragment = new DetailFragment();
+        // DetailFragment detailFragment = new DetailFragment();
         DetailsFragment detailFragment = new DetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.addToBackStack(null);
@@ -33,7 +35,9 @@ public class DetailActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
 
-            this.startActivity(new Intent(DetailActivity.this, MainActivity.class));
+        this.startActivity(new Intent(DetailActivity.this, MainActivity.class));
 
     }
+
+
 }

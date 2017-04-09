@@ -1,9 +1,11 @@
 package com.example.arnal.movies;
 
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import com.example.arnal.movies.adapter.ReviewsAdapter;
 import com.example.arnal.movies.adapter.TrailerAdapter;
 import com.example.arnal.movies.database.MovieContract;
+import com.example.arnal.movies.database.MovieContract.MovieEntry;
 import com.example.arnal.movies.model.Movie;
 import com.example.arnal.movies.model.MoviesAPI;
 import com.example.arnal.movies.model.Review;
@@ -36,6 +40,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,15 +71,33 @@ public class DetailsFragment extends Fragment {
     private TrailerAdapter trailerAdapter;
     private Context context;
     String id;
+    ContentResolver mContentResolver;
+    String idMovie;
 
+   /* @BindView(R.id.favourite_view)
+    LinearLayout favouriteView;
+
+    @BindView(R.id.favorite_icon)
+    ImageView mFavouriteIcon;
+
+    @BindView(R.id.favourite_text_view)
+    TextView mFavouriteTextView;*/
+
+    ImageView mFavouriteIcon;
+    TextView mFavouriteTextView;
+    LinearLayout favouriteView;
 
     public DetailsFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
+        mContentResolver = getActivity().getContentResolver();
         final ScrollView scrollView = (ScrollView) inflater.inflate(R.layout.movie_detail_fragment, container, false);
         fragmentType = getActivity().getIntent().getStringExtra(FRAGMENT_TYPE);
 
@@ -113,7 +136,7 @@ public class DetailsFragment extends Fragment {
                     break;
             }
         }
-        FloatingActionButton fab = (FloatingActionButton) scrollView.findViewById(R.id.fab);
+     /*   FloatingActionButton fab = (FloatingActionButton) scrollView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +144,98 @@ public class DetailsFragment extends Fragment {
                         .setAction("Action", null).show();
                 addFavourite();
             }
-        });
+        });*/
+
+        mFavouriteIcon = (ImageView)scrollView.findViewById(R.id.favorite_icon) ;
+        mFavouriteTextView = (TextView)scrollView.findViewById(R.id.favourite_text_view);
+        favouriteView = (LinearLayout) scrollView.findViewById(R.id.favourite_view);
+
+       String idMovie = movie.getId();
+        Log.i("MainActivityFragment", idMovie);
+
+        // Set favourite image and text after figuring out whether the movie is favourited
+        setFavouriteImageText(isFavourited(idMovie), mFavouriteIcon, mFavouriteTextView);
+
+       favouriteView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               String idMovie = movie.getId();
+
+               String favouriteText = mFavouriteTextView.getText().toString();
+
+               Log.i("MainActivityFragment", favouriteText);
+               setFavouriteImageText(true, mFavouriteIcon, mFavouriteTextView);
+
+               //Check whether the movie is favourited
+               if (favouriteText.equals(getString(R.string.favourited))) {
+                   Toast.makeText(getActivity().getApplicationContext(), "Removed from Favorite List", Toast.LENGTH_SHORT).show();
+
+                   // Unmark as favourite and delete it from the database
+
+                   mContentResolver.delete(
+                           MovieEntry.CONTENT_URI,
+                           MovieEntry.COLUMN_MOVIE_ID + "=?",
+                           new String[]{idMovie}
+                   );
+
+                   // Update favourite icon and text
+                   setFavouriteImageText(false, mFavouriteIcon, mFavouriteTextView);
+               }else {
+                   Toast.makeText(getActivity().getApplicationContext(), "Added to Favorite List", Toast.LENGTH_SHORT).show();
+                   addFavourite();
+
+                   // Update favourite icon and text
+                   setFavouriteImageText(true, mFavouriteIcon, mFavouriteTextView);
+               }
+           }
+       });
+      /*  favouriteView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+
+
+                Toast.makeText(getActivity().getApplicationContext(), "Please long press the key", Toast.LENGTH_LONG );*/
+               // String favouriteText = mFavouriteTextView.getText().toString();
+
+             /*   //Check whether the movie is favourited
+                if (favouriteText.equals(getString(R.string.favourited))) {
+                    // Unmark as favourite and delete it from the database
+
+                    mContentResolver.delete(
+                            MovieEntry.CONTENT_URI,
+                            MovieEntry.COLUMN_MOVIE_ID + "=?",
+                            new String[]{movieId}
+                    );
+
+                    // Update favourite icon and text
+                    setFavouriteImageText(false, mFavouriteIcon, mFavouriteTextView);
+                } else {
+                   *//* // Add as favourite and insert it into the database
+                    ContentValues values = new ContentValues();
+                    values.put(MovieEntry.COLUMN_MOVIE_ID, movieId);
+                    values.put(MovieEntry.COLUMN_MOVIE_TITLE, originalTitle);
+                    values.put(MovieEntry.COLUMN_MOVIE_PATH, posterPath);
+                    values.put(MovieEntry.COLUMN_MOVIE_DATE, releaseDate);
+                    values.put(MovieEntry.COLUMN_MOVE_RATING, voteAverageTV.getText().toString());
+                    values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, overview);*//*
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MovieEntry.COLUMN_MOVIE_ID, movieId);
+                    contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginal_title());
+                    contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
+                    contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE, movie.getVote_average());
+                    contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+                    contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
+
+                    Uri newUri = mContentResolver.insert(MovieEntry.CONTENT_URI, contentValues);
+
+                    // Update favourite icon and text
+                    setFavouriteImageText(true, mFavouriteIcon, mFavouriteTextView);
+                }*/
+/*
+            }
+        });*/
 
         RecyclerView recyclerView = (RecyclerView) scrollView.findViewById(R.id.recyclerView_review);
         LinearLayoutManager layoutManager =
@@ -236,15 +350,21 @@ public class DetailsFragment extends Fragment {
 
 
       //New Content values object
+       /* ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginal_title());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE, movie.getVote_average());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());*/
+
+
         ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieEntry.COLUMN_MOVIE_ID, movie.getId());
         contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginal_title());
         contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
         contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE, movie.getVote_average());
         contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
         contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
-
-
-
 
         Uri uri = getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
 
@@ -252,6 +372,36 @@ public class DetailsFragment extends Fragment {
         /*if(uri != null){
             Toast.makeText(getActivity().getApplicationContext().getBaseContext(), uri.toString(),Toast.LENGTH_LONG).show();
         }*/
+    }
+
+
+    public static void setFavouriteImageText(boolean favourite, ImageView imageView, TextView textView) {
+        if (favourite) {
+            imageView.setImageResource(R.drawable.ic_fav);
+            textView.setText(R.string.favourited);
+        } else {
+            imageView.setImageResource(R.drawable.ic_fav_light);
+            textView.setText(R.string.mark_as_favourite);
+        }
+    }
+
+    public boolean isFavourited(String movieId) {
+        String[] projection = {MovieEntry.COLUMN_MOVIE_ID};
+        String selection = MovieEntry.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = new String[]{movieId};
+
+        Cursor cursor = mContentResolver.query(
+                MovieEntry.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null
+        );
+        if (cursor != null & cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

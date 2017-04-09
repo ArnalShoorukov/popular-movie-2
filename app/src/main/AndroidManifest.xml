@@ -26,11 +26,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <provider
-            android:authorities="com.example.arnal.movies"
-            android:name="com.example.arnal.movies.database.MovieContentProvider"
-            android:exported="false"/>
 
+        <provider
+            android:name=".database.MovieContentProvider"
+            android:authorities="com.example.arnal.movies"
+            android:exported="false" />
+
+        <activity android:name=".FavorDetailsActivity"></activity>
     </application>
 
 </manifest>

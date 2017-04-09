@@ -12,7 +12,8 @@
     <string name="db_unavailable">Database Unavailable</string>
     <string name="error">Error occurred</string>
     <string name="added_favorite">Added to favourites</string>
+    <string name="favourited">Favourite</string>
+    <string name="mark_as_favourite">Mark As Favourite</string>
 
-
-
+    <string name="empty_favourite_gridview_message">Add some of your favourite movies here.</string>
 </resources>
