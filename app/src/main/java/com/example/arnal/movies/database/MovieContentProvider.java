@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import static com.example.arnal.movies.database.MovieContract.MovieEntry.TABLE_NAME;
 import static com.example.arnal.movies.database.MovieContract.MovieEntry;
@@ -32,8 +33,6 @@ public class MovieContentProvider extends ContentProvider {
 
         return uriMatcher;
     }
-
-
     private MovieDbHelper movieDbHelper;
 
     @Override
@@ -53,7 +52,6 @@ public class MovieContentProvider extends ContentProvider {
 
         // Cursor to hold the result of the query
         Cursor cursor;
-
         // Get the code that the URI matcher matches to
         int match = sUriMatcher.match(uri);
         switch (match) {
@@ -73,14 +71,22 @@ public class MovieContentProvider extends ContentProvider {
 
         // Set notification URI on the Cursor
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
+        Log.i("ContentProvider", "Test Cursor inside Content Provider " + cursor);
         return cursor;
     }
 
     @Nullable
     @Override
     public String getType(Uri uri) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIE:
+                return MovieEntry.CONTENT_LIST_TYPE;
+            case MOVIE_WITH_ID:
+                return MovieEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri + " with match " + match);
+        }
     }
 
     @Nullable
@@ -146,7 +152,29 @@ public class MovieContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        if (contentValues.containsKey(MovieEntry.COLUMN_MOVIE_ID)) {
+            String movieId = contentValues.getAsString(MovieEntry.COLUMN_MOVIE_ID);
+            if (movieId == null) {
+                throw new IllegalArgumentException("Movie reques an ID");
+            }
+        }
+        // Do not update if there are no values to update
+        if (contentValues.size() == 0) {
+            return 0;
+        }
+
+        // Get writeable database
+        SQLiteDatabase db = movieDbHelper.getWritableDatabase();
+
+        // Number of rows updated
+        int rowsUpdated = db.update(TABLE_NAME, contentValues, selection, selectionArgs);
+
+        // Notify all listeners if at least one row has been updated
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsUpdated;
     }
 }

@@ -42,9 +42,14 @@ public class PopularFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        super.onActivityCreated(savedInstanceState);
         getPopularMovies();
 
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_popular, container,false);
@@ -69,6 +74,17 @@ public class PopularFragment extends Fragment {
         return recyclerView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
   private void getPopularMovies() {
       Retrofit retrofit = new Retrofit.Builder()
               .baseUrl(MainActivity.ENDPOINT)

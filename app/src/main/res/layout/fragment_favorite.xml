@@ -14,13 +14,6 @@
         android:focusableInTouchMode="false" />
 
 
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-
     <TextView
         android:id="@+id/empty_list_view"
         style="@style/TextViewBasic.CenterEmptyMessage" />

@@ -8,8 +8,8 @@
 
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/trailer_image_width"
+        android:layout_height="@dimen/trailer_image_height"
         app:srcCompat="@android:drawable/ic_media_play"
         android:id="@+id/trailerImage"
         android:layout_marginTop="16dp"
@@ -20,7 +20,7 @@
 
     <TextView
         android:text="Trailer Name"
-        android:layout_width="100dp"
+        android:layout_width="@dimen/trailer_image_width"
         android:layout_height="wrap_content"
         android:id="@+id/trailerText"
         app:layout_constraintRight_toRightOf="@+id/trailerImage"

@@ -43,8 +43,21 @@ public class RatedFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         getRatedMovies();
 
@@ -63,11 +76,16 @@ public class RatedFragment extends Fragment {
                 intent.putExtra(DetailsFragment.FRAGMENT_TYPE, "RatedFragment");
 
                 getActivity().startActivity(intent);
-
             }
         });
         return recyclerView;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
     private void getRatedMovies() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.ENDPOINT)

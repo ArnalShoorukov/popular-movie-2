@@ -7,8 +7,8 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="@dimen/image_width"
+        android:layout_height="@dimen/image_height"
         android:id="@+id/poster_cardview"
         android:layout_marginTop="2dp"
         app:layout_constraintTop_toTopOf="parent"

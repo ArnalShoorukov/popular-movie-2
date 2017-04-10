@@ -4,15 +4,10 @@ package com.example.arnal.movies;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,7 +35,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,14 +68,6 @@ public class DetailsFragment extends Fragment {
     ContentResolver mContentResolver;
     String idMovie;
 
-   /* @BindView(R.id.favourite_view)
-    LinearLayout favouriteView;
-
-    @BindView(R.id.favorite_icon)
-    ImageView mFavouriteIcon;
-
-    @BindView(R.id.favourite_text_view)
-    TextView mFavouriteTextView;*/
 
     ImageView mFavouriteIcon;
     TextView mFavouriteTextView;
@@ -94,7 +80,6 @@ public class DetailsFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-
 
 
         mContentResolver = getActivity().getContentResolver();
@@ -136,15 +121,6 @@ public class DetailsFragment extends Fragment {
                     break;
             }
         }
-     /*   FloatingActionButton fab = (FloatingActionButton) scrollView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Added to Favorite", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                addFavourite();
-            }
-        });*/
 
         mFavouriteIcon = (ImageView)scrollView.findViewById(R.id.favorite_icon) ;
         mFavouriteTextView = (TextView)scrollView.findViewById(R.id.favourite_text_view);
@@ -171,7 +147,6 @@ public class DetailsFragment extends Fragment {
                    Toast.makeText(getActivity().getApplicationContext(), "Removed from Favorite List", Toast.LENGTH_SHORT).show();
 
                    // Unmark as favourite and delete it from the database
-
                    mContentResolver.delete(
                            MovieEntry.CONTENT_URI,
                            MovieEntry.COLUMN_MOVIE_ID + "=?",
@@ -189,53 +164,6 @@ public class DetailsFragment extends Fragment {
                }
            }
        });
-      /*  favouriteView.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-
-
-
-                Toast.makeText(getActivity().getApplicationContext(), "Please long press the key", Toast.LENGTH_LONG );*/
-               // String favouriteText = mFavouriteTextView.getText().toString();
-
-             /*   //Check whether the movie is favourited
-                if (favouriteText.equals(getString(R.string.favourited))) {
-                    // Unmark as favourite and delete it from the database
-
-                    mContentResolver.delete(
-                            MovieEntry.CONTENT_URI,
-                            MovieEntry.COLUMN_MOVIE_ID + "=?",
-                            new String[]{movieId}
-                    );
-
-                    // Update favourite icon and text
-                    setFavouriteImageText(false, mFavouriteIcon, mFavouriteTextView);
-                } else {
-                   *//* // Add as favourite and insert it into the database
-                    ContentValues values = new ContentValues();
-                    values.put(MovieEntry.COLUMN_MOVIE_ID, movieId);
-                    values.put(MovieEntry.COLUMN_MOVIE_TITLE, originalTitle);
-                    values.put(MovieEntry.COLUMN_MOVIE_PATH, posterPath);
-                    values.put(MovieEntry.COLUMN_MOVIE_DATE, releaseDate);
-                    values.put(MovieEntry.COLUMN_MOVE_RATING, voteAverageTV.getText().toString());
-                    values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, overview);*//*
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MovieEntry.COLUMN_MOVIE_ID, movieId);
-                    contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginal_title());
-                    contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
-                    contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE, movie.getVote_average());
-                    contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-                    contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
-
-                    Uri newUri = mContentResolver.insert(MovieEntry.CONTENT_URI, contentValues);
-
-                    // Update favourite icon and text
-                    setFavouriteImageText(true, mFavouriteIcon, mFavouriteTextView);
-                }*/
-/*
-            }
-        });*/
 
         RecyclerView recyclerView = (RecyclerView) scrollView.findViewById(R.id.recyclerView_review);
         LinearLayoutManager layoutManager =
@@ -270,7 +198,6 @@ public class DetailsFragment extends Fragment {
                 trailerList = (ArrayList<Trailer>) trailersResult.getResults();
                 trailerAdapter.setTrailerList(trailerList);
             }
-
             @Override
             public void onFailure(Call<TrailersResult> call, Throwable t) {
                 Toast toast = Toast.makeText(context, R.string.error, Toast.LENGTH_LONG);
@@ -292,6 +219,8 @@ public class DetailsFragment extends Fragment {
         ImageView image = (ImageView) scrollView.findViewById(R.id.iv_details);
         Picasso.with(context)
                 .load("https://image.tmdb.org/t/p/w185/" + movie.getPoster_path())
+                .placeholder(R.drawable.loading_icon) // Displays this image while loading
+                .error(R.drawable.ic_stat_name)    // Displays this image when there is an error
                 .into(image);
 
         TextView date = (TextView) scrollView.findViewById(R.id.releaseDate);
@@ -327,7 +256,6 @@ public class DetailsFragment extends Fragment {
                 ReviewResult reviewResult = response.body();
                 reviewList = (ArrayList<Review>) reviewResult.getResults();
                 adapter.setReviewList(reviewList);
-
             }
 
             @Override
@@ -339,24 +267,6 @@ public class DetailsFragment extends Fragment {
     }
 
     private void addFavourite() {
-        /*SQLiteOpenHelper dbHelper = new MovieDbHelper(getActivity());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("MOVIE_ID", movie.getId());
-        contentValues.put("ORIGINAL_TITLE", movie.getOriginal_title());
-        contentValues.put("POSTER_PATH", movie.getPoster_path());
-        db.insert("MOVIE", null, contentValues);
-        db.insertWithOnConflict("MOVIE", null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);*/
-
-
-      //New Content values object
-       /* ContentValues contentValues = new ContentValues();
-        contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginal_title());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getRelease_date());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE, movie.getVote_average());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());*/
-
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieEntry.COLUMN_MOVIE_ID, movie.getId());
@@ -367,11 +277,6 @@ public class DetailsFragment extends Fragment {
         contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPoster_path());
 
         Uri uri = getActivity().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
-
-
-        /*if(uri != null){
-            Toast.makeText(getActivity().getApplicationContext().getBaseContext(), uri.toString(),Toast.LENGTH_LONG).show();
-        }*/
     }
 
 
@@ -397,11 +302,7 @@ public class DetailsFragment extends Fragment {
                 selectionArgs,
                 null
         );
-        if (cursor != null & cursor.moveToFirst()) {
-            return true;
-        } else {
-            return false;
-        }
+        return cursor != null & cursor.moveToFirst();
     }
 }
 

@@ -51,7 +51,6 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
         final TextView contentView = holder.contentReview;
         author.setText(review.getAuthor());
         contentView.setText(review.getContent());
-
     }
 
     @Override

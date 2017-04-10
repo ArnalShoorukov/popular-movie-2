@@ -1,6 +1,7 @@
 package com.example.arnal.movies.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
+import com.example.arnal.movies.DetailActivity;
+import com.example.arnal.movies.DetailsFragment;
 import com.example.arnal.movies.R;
 import com.squareup.picasso.Picasso;
 
@@ -20,8 +23,19 @@ import com.example.arnal.movies.database.MovieContract.MovieEntry;
  */
 
 public class FavouriteCursorAdapter extends CursorAdapter {
-    public FavouriteCursorAdapter(Context context, Cursor c) {
-        super(context, c, 0);
+
+    private Listener listener;
+
+    public FavouriteCursorAdapter(Context context, Cursor cursor) {
+        super(context, cursor, 0);
+    }
+
+    public interface Listener {
+        void onClick(int position);
+    }
+
+    public void setListener(FavouriteCursorAdapter.Listener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -30,10 +44,10 @@ public class FavouriteCursorAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, Context context, final Cursor cursor) {
         ImageView posterImage = (ImageView) view.findViewById(R.id.poster_cardview);
 
-        int movieIdColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID);
+        final int movieIdColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID);
         int posterColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH);
 
         String movieId = cursor.getString(movieIdColumnIndex);
@@ -44,6 +58,12 @@ public class FavouriteCursorAdapter extends CursorAdapter {
                 .load("https://image.tmdb.org/t/p/w185/" + posterPath)
                 .into(posterImage);
 
+        posterImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(cursor.getPosition());
 
+            }
+        });
     }
 }

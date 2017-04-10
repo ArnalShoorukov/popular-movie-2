@@ -23,6 +23,8 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
 
+import static com.example.arnal.movies.DetailsFragment.setFavouriteImageText;
+
 /**
  * Created by arnal on 4/8/17.
  */
@@ -30,6 +32,10 @@ public class FavouriteDetailFragment extends Fragment implements LoaderManager.L
 
     ContentResolver mContentResolver;
     private static final int FAVOURITE_LOADER = 13;
+
+    ImageView mFavouriteIcon;
+    TextView mFavouriteTextView;
+    LinearLayout favouriteView;
 
     static final String MOVIE_URI = "URI";
 
@@ -90,7 +96,9 @@ public class FavouriteDetailFragment extends Fragment implements LoaderManager.L
         releaseDate = (TextView) rootView.findViewById(R.id.releaseDate);
         overview = (TextView) rootView.findViewById(R.id.overviewBody);
         vote = (TextView) rootView.findViewById(R.id.vote);
-
+        mFavouriteIcon = (ImageView) rootView.findViewById(R.id.favorite_icon);
+        mFavouriteTextView = (TextView) rootView.findViewById(R.id.favourite_text_view);
+        favouriteView = (LinearLayout) rootView.findViewById(R.id.favourite_view);
 
         getLoaderManager().initLoader(FAVOURITE_LOADER, null, this);
 
@@ -100,9 +108,7 @@ public class FavouriteDetailFragment extends Fragment implements LoaderManager.L
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -131,10 +137,11 @@ public class FavouriteDetailFragment extends Fragment implements LoaderManager.L
             String myUrl = "https://image.tmdb.org/t/p/w185/";
 
             Picasso.with(getActivity())
-                    .load(myUrl)
-                    /*.placeholder(R.drawable.loading_icon) // Displays this image while loading
-                    .error(R.drawable.errorstop)    // Displays this image when there is an error*/
+                    .load(myUrl + posterPath)
+                    .placeholder(R.drawable.loading_icon) // Displays this image while loading
+                    .error(R.drawable.ic_stat_name)    // Displays this image when there is an error
                     .into(image);
+
 
             final String releasDate = data.getString(COL_MOVIE_DATE);
             releaseDate.setText(releasDate);
@@ -145,7 +152,42 @@ public class FavouriteDetailFragment extends Fragment implements LoaderManager.L
             final String moviePlot = data.getString(COL_MOVIE_OVERVIEW);
             overview.setText(moviePlot);
 
+            mFavouriteIcon.setImageResource(R.drawable.ic_fav);
+            mFavouriteTextView.setText(R.string.favourited);
+            favouriteView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String favouriteText = mFavouriteTextView.getText().toString();
 
+                    //Check whether the movie is favourited
+                    if (favouriteText.equals(getString(R.string.favourited))) {
+                        // Unmark as favourite and delete it from the database
+
+                        mContentResolver.delete(
+                                mUri,
+                                null,
+                                null
+                        );
+
+                        // Update favourite icon and text
+                        setFavouriteImageText(false, mFavouriteIcon, mFavouriteTextView);
+                    } else {
+                        // Add as favourite and insert it into the database
+                        ContentValues values = new ContentValues();
+                        values.put(MovieEntry.COLUMN_MOVIE_ID, movieId);
+                        values.put(MovieEntry.COLUMN_TITLE, movieTitle);
+                        values.put(MovieEntry.COLUMN_POSTER_PATH, posterPath);
+                        values.put(MovieEntry.COLUMN_RELEASE_DATE, releasDate);
+                        values.put(MovieEntry.COLUMN_VOTE, voteAverage);
+                        values.put(MovieEntry.COLUMN_OVERVIEW, moviePlot);
+
+                        Uri newUri = mContentResolver.insert(MovieEntry.CONTENT_URI, values);
+
+                        // Update favourite icon and text
+                        setFavouriteImageText(true, mFavouriteIcon, mFavouriteTextView);
+                    }
+                }
+            });
         }
     }
 

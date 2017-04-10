@@ -1,10 +1,11 @@
 package com.example.arnal.movies;
 
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
+import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,9 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -31,10 +32,8 @@ import com.example.arnal.movies.model.Movie;
 public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = FavoriteFragment.class.getName();
 
-
-
     // Identifier for the Loader
-    private static final int FAVOURITE_LOADER = 0;
+    private static final int FAVOURITE_LOADER = 3;
     FavouriteCursorAdapter mCursorAdapter;
     private static final String[] FAVOURITE_COLUMNS = {
             MovieEntry._ID,
@@ -54,8 +53,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_MOVIE_DATE = 4;
     public static final int COL_MOVE_RATING = 5;
     public static final int COL_MOVIE_OVERVIEW = 6;
-     GridView favouriteGridView;
 
+    GridView favouriteGridView;
+    TextView mEmptyStateTextView;
 
     private int mPosition = GridView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
@@ -65,7 +65,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
      * A callback interface that allows the fragment to pass data on to the activity
      */
     public interface Callback {
-        public void onFavouriteSelected(Uri contentUri);
+        void onFavouriteSelected(Uri contentUri);
     }
 
     public FavoriteFragment() {
@@ -75,15 +75,13 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Kick off the loader
-        getActivity().getLoaderManager().initLoader(FAVOURITE_LOADER, null, this);
+        Log.i(LOG_TAG, "Test" + FAVOURITE_LOADER);
+        getLoaderManager().initLoader(FAVOURITE_LOADER, null, this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        // When tablets rotate, saves the currently selected list item
-       /* if (mPosition != GridView.INVALID_POSITION) {
-            outState.putInt(SELECTED_KEY, mPosition);
-        }*/
+
         super.onSaveInstanceState(outState);
     }
 
@@ -94,30 +92,28 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
 
         favouriteGridView = (GridView)rootView.findViewById(R.id.movie_activity_grid_view);
+        mEmptyStateTextView = (TextView) rootView.findViewById(R.id.empty_list_view);
+        Cursor cursor = null;
 
-
-        mCursorAdapter = new FavouriteCursorAdapter(getContext(), null);
+        mCursorAdapter = new FavouriteCursorAdapter(getContext(), cursor);
 
         favouriteGridView.setAdapter(mCursorAdapter);
+        favouriteGridView.setEmptyView(mEmptyStateTextView);
 
-
-        // Click on a movie to show its details
-        favouriteGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mCursorAdapter.setListener(new FavouriteCursorAdapter.Listener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+            public void onClick(int position) {
+
+                Cursor cursor = (Cursor) mCursorAdapter.getItem(position);
                 if (cursor != null) {
-                    String columnId = cursor.getString(cursor.getColumnIndex(MovieEntry._ID));
-
-                    Log.i(LOG_TAG, "Colunm Id value" + columnId);
-
+                    String columnId = cursor.
+                            getString(cursor.getColumnIndex(MovieEntry._ID));
+                    Uri contentUri = MovieEntry.buildMovieUriWithId(columnId);
+                    Intent intent = new Intent(getContext(), FavorDetailsActivity.class);
+                    intent.setData(contentUri);
+                    startActivity(intent);
                 }
-                mPosition = i;
-
-
-
-                Toast.makeText(getActivity().getApplicationContext(), "yes click -  Favorite List", Toast.LENGTH_SHORT).show();
-
+                mPosition = position;
             }
         });
 
@@ -127,6 +123,13 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // re-queries for all tasks
+        getActivity().getSupportLoaderManager().restartLoader(FAVOURITE_LOADER, null, this);
     }
 
     @Override
@@ -153,22 +156,25 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-       /* if (cursor == null || !cursor.moveToFirst()) {
+        if (cursor == null || !cursor.moveToFirst()) {
             mEmptyStateTextView.setText(R.string.empty_favourite_gridview_message);
-        }*/
+        }
+
+        Log.i(LOG_TAG, "Test Cursor before swap " + cursor);
         mCursorAdapter.swapCursor(cursor);
+        Log.i(LOG_TAG, "Test Cursor Adapter" + mCursorAdapter);
+        Log.i(LOG_TAG, "Test Cursor Adapter Swap" + mCursorAdapter.swapCursor(cursor));
 
         if (mPosition != ListView.INVALID_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             favouriteGridView.smoothScrollToPosition(mPosition);
         }
-
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
     }
+
 }

@@ -8,7 +8,7 @@
     android:id="@+id/review_container">
 
     <TextView
-        android:text="John Smit"
+        tools:text="John Smit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/author_review"
@@ -21,7 +21,7 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:text="Review text will be here"
+        tools:text="Review text will be here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/content_review"

@@ -9,6 +9,7 @@ import com.facebook.stetho.Stetho;
 
 public class MainActivity extends AppCompatActivity {
 
+
     static final String ENDPOINT = "http://api.themoviedb.org/3/";
     static final String API_KEY = BuildConfig.MOVIES_TMDB_API_KEY;
 

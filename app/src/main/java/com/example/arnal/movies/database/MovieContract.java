@@ -1,5 +1,6 @@
 package com.example.arnal.movies.database;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -20,6 +21,13 @@ public class MovieContract {
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
+
+        /* The MIME type of the {@link #CONTENT_URI} for a list of movies */
+        public static final String CONTENT_LIST_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + AUTHORITY + "/" + PATH_MOVIE;
+        /* The MIME type of the {@link #CONTENT_URI} for a single movie */
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + AUTHORITY + "/" + PATH_MOVIE;
 
         public static final String TABLE_NAME = "movie" ;
 

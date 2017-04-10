@@ -18,4 +18,9 @@
     <!-- Imageview size -->
     <dimen name="image_width">120dp</dimen>
     <dimen name="image_height">180dp</dimen>
+    <dimen name="title">45sp</dimen>
+
+    <dimen name="trailer_image_width">100dp</dimen>
+    <dimen name="trailer_image_height">100dp</dimen>
+
 </resources>
