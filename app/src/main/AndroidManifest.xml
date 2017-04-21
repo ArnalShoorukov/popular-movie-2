@@ -7,7 +7,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -23,8 +23,7 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -35,9 +34,7 @@
             android:authorities="com.example.arnal.movies"
             android:exported="false" />
 
-        <activity
-            android:name=".FavorDetailsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+        <activity android:name=".FavorDetailsActivity"></activity>
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package com.example.arnal.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,7 @@ public class RatedFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +88,13 @@ public class RatedFragment extends Fragment {
         super.onDestroyView();
     }
 
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+   
     private void getRatedMovies() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.ENDPOINT)
